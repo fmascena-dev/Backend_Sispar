@@ -76,18 +76,10 @@ def login():
         db.select(Colaborador).where(Colaborador.email == email)
     ).scalar() # -> A linha de informação OU None
     
-    print('*'*100)
-    print(f'dado: {colaborador} é do tipo {type(colaborador)}')
-    print('*'*100)
-    
     if not colaborador:
         return jsonify({'mensagem': 'Usuario não encontrado'}), 404
     
     colaborador = colaborador.to_dict()
-    
-    print('*'*100)
-    print(f'dado: {colaborador} é do tipo {type(colaborador)}')
-    print('*'*100)
     
     if email == colaborador.get('email') and checar_senha(senha, colaborador.get('senha')):
         return jsonify({'mensagem': 'Login realizado com sucesso'}), 200
