@@ -21,11 +21,10 @@ class Reembolso(db.Model):
     valor_km = Column(String(50)) 
     valor_faturado = Column(DECIMAL(10,2), nullable=False) 
     despesa = Column(DECIMAL(10,2))
-    id_colaborador = Column(Integer, ForeignKey(column='colaborador.id'))
-    status = Column(String(25)) 
-#-------------------------------------------------------------------------------------------------------------
+    
+    #-------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, colaborador, empresa, num_prestacao,descricao, data, tipo_reembolso, centro_custo, ordem_interna, divisao, pep, moeda, distancia_km, valor_km, valor_faturado, despesa, id_colaborador, status='Em analise'):
+    def __init__(self, colaborador, empresa, num_prestacao,descricao, data, tipo_reembolso, centro_custo, ordem_interna, divisao, pep, moeda, distancia_km, valor_km, valor_faturado, despesa):
         self.colaborador = colaborador
         self.empresa = empresa
         self.num_prestacao = num_prestacao
@@ -41,5 +40,4 @@ class Reembolso(db.Model):
         self.valor_km = valor_km
         self.valor_faturado = valor_faturado
         self.despesa = despesa
-        self.id_colaborador = id_colaborador
-        self.status = status
+                
