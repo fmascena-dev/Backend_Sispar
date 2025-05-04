@@ -4,6 +4,8 @@ from src.controller.colaborador_controller import bp_colaborador
 from src.model import db
 from config import Config
 from flasgger import Swagger
+from flask_cors import CORS
+from src.model.reembolso_route import reembolso_bp
 
 swagger_config = {
     "headers": [],
@@ -21,8 +23,10 @@ swagger_config = {
 # Create_app() -> Vai configurar a instância do Flask
 def create_app():
     app = Flask(__name__)
+    # CORS(app, origins="*")
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
     app.register_blueprint(bp_colaborador)
-    
+    app.register_blueprint(reembolso_bp)
     app.config.from_object(Config)
     
     db.init_app(app)
