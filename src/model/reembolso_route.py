@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from src.model import db
 from src.model.reembolso_model import Reembolso
 from datetime import datetime
+from src.model.colaborador_model import Colaborador 
 
 reembolso_bp = Blueprint('reembolso', __name__, url_prefix='/reembolso')
 
@@ -12,6 +13,8 @@ def cadastrar_reembolso():
     
     dados = request.get_json()
     print("Dados recebidos:", dados)
+    
+    
 
     try:
         # Verifica se é uma lista ou um único objeto
@@ -19,13 +22,20 @@ def cadastrar_reembolso():
         data_list = dados if isinstance(dados, list) else [dados]
         
         for item in data_list:
+            
+            colaborador_nome = item['colaborador']
+            colaborador_obj = Colaborador.query.filter_by(nome=colaborador_nome).first()
+
+            if not colaborador_obj:
+                return jsonify({'erro': f'Colaborador "{colaborador_nome}" não encontrado no sistema.'}), 404
+            
             try:
                 data_formatada = datetime.strptime(item['data'], '%d/%m/%Y').date()
             except ValueError:
                 data_formatada = datetime.strptime(item['data'], '%Y-%m-%d').date()
 
             novo_reembolso = Reembolso(
-                colaborador=item['colaborador'],
+                colaborador=colaborador_nome,
                 empresa=item['empresa'],
                 num_prestacao=item['num_prestacao'],
                 descricao=item['descricao'],
@@ -40,7 +50,7 @@ def cadastrar_reembolso():
                 valor_km=item.get('valor_km'),
                 valor_faturado=item['valor_faturado'],
                 despesa=item.get('despesa'),
-                id_colaborador=item.get('id_colaborador'),  # Agora opcional
+                id_colaborador=colaborador_obj.id,
                 status=item.get('status', 'Em analise')
             )
             reembolsos.append(novo_reembolso)
@@ -92,3 +102,20 @@ def listar_reembolsos():
 
     except Exception as e:
         return jsonify({'erro': f'Erro ao listar reembolsos: {str(e)}'}), 500
+    
+@reembolso_bp.route('/reembolsos/<int:id>', methods=['DELETE'])
+def deletar_reembolso(id):
+    try:
+        reembolso = Reembolso.query.get(id)
+
+        if not reembolso:
+            return jsonify({'erro': f'Reembolso com ID {id} não encontrado.'}), 404
+
+        db.session.delete(reembolso)
+        db.session.commit()
+
+        return jsonify({'mensagem': f'Reembolso com ID {id} deletado com sucesso!'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'erro': f'Erro ao deletar reembolso: {str(e)}'}), 500
