@@ -86,4 +86,3 @@ def login():
     else:
         return jsonify({'mensagem': 'Credenciais invalidas'}), 400
     
-    

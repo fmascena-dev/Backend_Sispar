@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from src.model import db
-from src.model.reembolso_model import Reembolso  # supondo que o model se chame assim
+from src.model.reembolso_model import Reembolso
 from datetime import datetime
 
 reembolso_bp = Blueprint('reembolso', __name__, url_prefix='/reembolso')
@@ -8,51 +8,59 @@ reembolso_bp = Blueprint('reembolso', __name__, url_prefix='/reembolso')
 @reembolso_bp.route('/reembolsos', methods=['POST', 'OPTIONS'])
 def cadastrar_reembolso():
     if request.method == 'OPTIONS':
-        # Resposta ao preflight CORS
         return '', 200
     
     dados = request.get_json()
     print("Dados recebidos:", dados)
 
     try:
-        # Converte a data do formato 'DD/MM/YYYY' para datetime.date
-        # data_formatada = datetime.strptime(dados['data'], '%d/%m/%Y').date()
-        try:
-            data_formatada = datetime.strptime(dados['data'], '%d/%m/%Y').date()
-        except ValueError:
-        # se falhar, tenta YYYY-MM-DD
-            data_formatada = datetime.strptime(dados['data'], '%Y-%m-%d').date()
+        # Verifica se é uma lista ou um único objeto
+        reembolsos = []
+        data_list = dados if isinstance(dados, list) else [dados]
+        
+        for item in data_list:
+            try:
+                data_formatada = datetime.strptime(item['data'], '%d/%m/%Y').date()
+            except ValueError:
+                data_formatada = datetime.strptime(item['data'], '%Y-%m-%d').date()
 
-        novo_reembolso = Reembolso(
-            colaborador=dados['colaborador'],
-            empresa=dados['empresa'],
-            num_prestacao=dados['num_prestacao'],
-            descricao=dados['descricao'],
-            data=data_formatada,
-            tipo_reembolso=dados['tipo_reembolso'],
-            centro_custo=dados['centro_custo'],
-            ordem_interna=dados['ordem_interna'],
-            divisao=dados['divisao'],
-            pep=dados['pep'],
-            moeda=dados['moeda'],
-            distancia_km=dados['distancia_km'],
-            valor_km=dados['valor_km'],
-            valor_faturado=dados['valor_faturado'],
-            despesa=dados['despesa']
-        )
-
-        db.session.add(novo_reembolso)
+            novo_reembolso = Reembolso(
+                colaborador=item['colaborador'],
+                empresa=item['empresa'],
+                num_prestacao=item['num_prestacao'],
+                descricao=item['descricao'],
+                data=data_formatada,
+                tipo_reembolso=item['tipo_reembolso'],
+                centro_custo=item['centro_custo'],
+                ordem_interna=item.get('ordem_interna'),
+                divisao=item.get('divisao'),
+                pep=item.get('pep'),
+                moeda=item['moeda'],
+                distancia_km=item.get('distancia_km'),
+                valor_km=item.get('valor_km'),
+                valor_faturado=item['valor_faturado'],
+                despesa=item.get('despesa'),
+                id_colaborador=item.get('id_colaborador'),  # Agora opcional
+                status=item.get('status', 'Em analise')
+            )
+            reembolsos.append(novo_reembolso)
+        
+        db.session.add_all(reembolsos)
         db.session.commit()
+        print(f"ID gerado: {novo_reembolso.id}")
+        
+        return jsonify({
+            'mensagem': f'{len(reembolsos)} reembolso(s) cadastrado(s) com sucesso!',
+            'total_itens': len(reembolsos)
+        }), 201
 
-        return jsonify({'mensagem': 'Reembolso cadastrado com sucesso!'}), 201
-
-    except ValueError:
-        return jsonify({'erro': 'Formato de data inválido. Use DD/MM/YYYY'}), 400
-
+    except ValueError as ve:
+        return jsonify({'erro': f'Formato de data inválido: {str(ve)}'}), 400
     except Exception as e:
+        db.session.rollback()
         print("Erro no backend:", e)
         return jsonify({'erro': f'Erro ao cadastrar reembolso: {str(e)}'}), 500
-
+    
 @reembolso_bp.route('/reembolsos', methods=['GET'])
 def listar_reembolsos():
     try:
@@ -76,7 +84,8 @@ def listar_reembolsos():
                 'distancia_km': r.distancia_km,
                 'valor_km': r.valor_km,
                 'valor_faturado': r.valor_faturado,
-                'despesa': r.despesa
+                'despesa': r.despesa,
+                'status': r.status
             })
 
         return jsonify(lista_reembolsos), 200
