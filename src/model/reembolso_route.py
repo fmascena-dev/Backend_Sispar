@@ -14,8 +14,6 @@ def cadastrar_reembolso():
     dados = request.get_json()
     print("Dados recebidos:", dados)
     
-    
-
     try:
         # Verifica se é uma lista ou um único objeto
         reembolsos = []
