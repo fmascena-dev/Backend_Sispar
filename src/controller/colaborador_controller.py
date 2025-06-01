@@ -17,7 +17,6 @@ def pegar_dados_todos_colaboradores():
         db.select(Colaborador)
     ).scalars().all()
     
-#                       expressão                   item        iteravel
     colaboradores = [ colaborador.all_data() for colaborador in colaboradores ]
     
     return jsonify(colaboradores), 200
@@ -86,7 +85,6 @@ def login():
     if not colaborador:
         return jsonify({'mensagem': 'Usuario não encontrado'}), 404
     
-    # colaborador = colaborador.to_dict()
     senha_hash_do_db = colaborador.senha
     
     if email == colaborador.email and checar_senha(senha, senha_hash_do_db):

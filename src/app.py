@@ -23,7 +23,6 @@ swagger_config = {
 # Create_app() -> Vai configurar a instância do Flask
 def create_app():
     app = Flask(__name__)
-    # CORS(app, origins="*")
     CORS(app, resources={r"/*": {"origins": Config.FRONTEND_URL}}, supports_credentials=True)
     app.register_blueprint(bp_colaborador)
     app.register_blueprint(reembolso_bp)
@@ -38,4 +37,4 @@ def create_app():
     
     return app
 
-app = create_app() # A instância da aplicação é criada e exposta como 'app' para o Gunicorn
+app = create_app()
