@@ -25,12 +25,19 @@ def pegar_dados_todos_colaboradores():
 @bp_colaborador.route('/cadastrar', methods=['POST'])
 def cadastrar_novo_colaborador(): 
     
-    dados_requisicao = request.get_json() 
+    dados_requisicao = request.get_json()
+    
+    # Hash da senha (retorna bytes)
+    hashed_password_bytes = hash_senha(dados_requisicao['senha'])
+    
+    # Converte o hash de bytes para string ANTES de salvar no DB
+    # Isso garante que a string salva é limpa e sem representações \x ou b''
+    hashed_password_str = hashed_password_bytes.decode('utf-8')
     
     novo_colaborador = Colaborador(
         nome=dados_requisicao['nome'], # Pegue do json o valor relacionado a chave nome
         email=dados_requisicao['email'],
-        senha= hash_senha(dados_requisicao['senha']) ,
+        senha=hashed_password_str ,
         cargo=dados_requisicao['cargo'],
         salario=dados_requisicao['salario']
     )
