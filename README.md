@@ -268,7 +268,7 @@ gunicorn --bind 0.0.0.0:$PORT src.app:app
     - **Método: `GET`**
 
     - **Parâmetros:**
-        - **n`um_prestacao` (path):** *O número da prestação a ser pesquisado.*
+        - **`um_prestacao` (path):** *O número da prestação a ser pesquisado.*
 
     - **Respostas:**
         - **`200 OK`:** *Retorna um array JSON de objetos de reembolso que correspondem ao num_prestacao.*
