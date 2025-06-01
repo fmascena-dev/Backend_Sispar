@@ -8,3 +8,4 @@ load_dotenv()
 class Config():
     SQLALCHEMY_DATABASE_URI = environ.get('URL_DATABASE_PROD') # Puxa a variável e utiliza para a conexão
     SQLALCHEMY_TRACK_MODIFICATIONS=False # OTIMIZA as querys no banco de dados
+    SECRET_KEY = environ.get('SECRET_KEY')
