@@ -82,7 +82,7 @@ def login():
     # colaborador = colaborador.to_dict()
     senha_hash_do_db = colaborador.senha
     
-    if email == colaborador.get('email') and checar_senha(senha, senha_hash_do_db):
+    if email == colaborador.email and checar_senha(senha, senha_hash_do_db):
         return jsonify({'mensagem': 'Login realizado com sucesso'}), 200
     else:
         return jsonify({'mensagem': 'Credenciais invalidas'}), 400
