@@ -119,3 +119,42 @@ def deletar_reembolso(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'erro': f'Erro ao deletar reembolso: {str(e)}'}), 500
+    
+#! LISTA O REEMBOLSO ATRAVÉS DO NÚMERO DE PRESTAÇÃO
+@reembolso_bp.route('/reembolsos/prestacao/<string:num_prestacao>', methods=['GET'])
+def listar_reembolsos_por_prestacao(num_prestacao):
+    
+    try:
+        #! Busca todos os reembolsos que correspondem ao num_prestacao fornecido
+        reembolsos = Reembolso.query.filter_by(num_prestacao=num_prestacao).all()
+
+        if not reembolsos:
+            return jsonify({'mensagem': f'Nenhum reembolso encontrado para o número de prestação "{num_prestacao}".'}), 404
+
+        lista_reembolsos = []
+        for r in reembolsos:
+            lista_reembolsos.append({
+                'id': r.id,
+                'colaborador': r.colaborador,
+                'empresa': r.empresa,
+                'num_prestacao': r.num_prestacao,
+                'descricao': r.descricao,
+                'data': r.data.strftime('%Y-%m-%d'),
+                'tipo_reembolso': r.tipo_reembolso,
+                'centro_custo': r.centro_custo,
+                'ordem_interna': r.ordem_interna,
+                'divisao': r.divisao,
+                'pep': r.pep,
+                'moeda': r.moeda,
+                'distancia_km': r.distancia_km,
+                'valor_km': r.valor_km,
+                'valor_faturado': r.valor_faturado,
+                'despesa': r.despesa,
+                'status': r.status
+            })
+
+        return jsonify(lista_reembolsos), 200
+
+    except Exception as e:
+        # Em caso de erro, retorna uma mensagem de erro 500
+        return jsonify({'erro': f'Erro ao buscar reembolsos por número de prestação: {str(e)}'}), 500
