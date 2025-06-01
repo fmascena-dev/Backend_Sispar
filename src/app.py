@@ -24,7 +24,7 @@ swagger_config = {
 def create_app():
     app = Flask(__name__)
     # CORS(app, origins="*")
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    CORS(app, resources={r"/*": {"origins": Config.FRONTEND_URL}}, supports_credentials=True)
     app.register_blueprint(bp_colaborador)
     app.register_blueprint(reembolso_bp)
     app.config.from_object(Config)

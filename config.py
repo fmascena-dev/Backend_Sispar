@@ -9,3 +9,7 @@ class Config():
     SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL')  # Puxa a variável e utiliza para a conexão
     SQLALCHEMY_TRACK_MODIFICATIONS=False # OTIMIZA as querys no banco de dados
     SECRET_KEY = environ.get('SECRET_KEY')
+    
+    # Adicione a URL do seu frontend aqui
+    # Para desenvolvimento local, você pode ter um fallback para 'http://localhost:3000' ou similar
+    FRONTEND_URL = environ.get('https://projeto-portal-sispar.vercel.app/', 'http://localhost:3000')
