@@ -37,3 +37,5 @@ def create_app():
         db.create_all()
     
     return app
+
+app = create_app() # A instância da aplicação é criada e exposta como 'app' para o Gunicorn
