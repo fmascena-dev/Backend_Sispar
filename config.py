@@ -12,4 +12,4 @@ class Config():
     
     # Adicione a URL do seu frontend aqui
     # Para desenvolvimento local, você pode ter um fallback para 'http://localhost:3000' ou similar
-    FRONTEND_URL = environ.get('https://projeto-portal-sispar.vercel.app', 'http://localhost:3000')
+    FRONTEND_URL = environ.get('FRONTEND_URL', 'http://localhost:3000')
