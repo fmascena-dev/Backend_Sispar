@@ -1,11 +1,11 @@
 # Armazenar as configurações do ambiente de desenvolvimento
 from os import environ # Esse arquivo tem acesso as varíaveis de ambiente
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 # Carregamento das variáveis de ambiente nesse arquivo
 
-load_dotenv()
+# load_dotenv()
 
 class Config():
-    SQLALCHEMY_DATABASE_URI = environ.get('URL_DATABASE_PROD') # Puxa a variável e utiliza para a conexão
+    SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL')  # Puxa a variável e utiliza para a conexão
     SQLALCHEMY_TRACK_MODIFICATIONS=False # OTIMIZA as querys no banco de dados
     SECRET_KEY = environ.get('SECRET_KEY')
