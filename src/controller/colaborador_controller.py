@@ -79,9 +79,10 @@ def login():
     if not colaborador:
         return jsonify({'mensagem': 'Usuario não encontrado'}), 404
     
-    colaborador = colaborador.to_dict()
+    # colaborador = colaborador.to_dict()
+    senha_hash_do_db = colaborador.senha
     
-    if email == colaborador.get('email') and checar_senha(senha, colaborador.get('senha')):
+    if email == colaborador.get('email') and checar_senha(senha, senha_hash_do_db):
         return jsonify({'mensagem': 'Login realizado com sucesso'}), 200
     else:
         return jsonify({'mensagem': 'Credenciais invalidas'}), 400
